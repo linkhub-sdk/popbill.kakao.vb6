@@ -22,8 +22,8 @@ Option Explicit
 '
 ' http://www.popbill.com
 ' Author : Jeong Yohan (code@linkhub.co.kr)
-' Written : 2018-03-16
-' Updated : 2018-03-16
+' Written : 2018-03-13
+' Updated : 2018-03-14
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -445,13 +445,13 @@ On Error GoTo ErrHandler
     
     Set ListContact = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBContactInfo
     
-    For Each T In result
+    For Each t In result
         Set info = New PBContactInfo
         
-        info.fromDictionary T
+        info.fromDictionary t
         
         ListContact.Add info
     Next
@@ -585,7 +585,7 @@ ErrHandler:
     Set GetCorpInfo = Nothing
 End Function
 
-'회원잔액조회
+'연동회원 잔여포인트조회
 Public Function GetBalance(CorpNum As String) As Double
     On Error GoTo ErrHandler
     
@@ -726,7 +726,7 @@ ErrHandler:
 End Function
 
 
-'단가확인
+'전송단가 확인
 Public Function GetUnitCost(CorpNum As String, KType As KakaoType) As Single
 On Error GoTo ErrHandler
     Dim result As Variant
@@ -752,7 +752,7 @@ End Function
 
 '''''''''''''''''''''''''' End Of PopbillBase '''''''''''''''''''''''''''''''''''''''''''''''
 
-
+' 카카오톡 관련 팝업 URL
 Public Function GetURL(CorpNum As String, UserID As String, TOGO As String) As String
 On Error GoTo ErrHandler
     Dim result As Variant
@@ -781,13 +781,13 @@ On Error GoTo ErrHandler
     
     Set ListPlusFriendID = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBPlusFriend
     
-    For Each T In result
+    For Each t In result
         Set info = New PBPlusFriend
         
-        info.fromDictionary T
+        info.fromDictionary t
         
         ListPlusFriendID.Add info
     Next
@@ -800,7 +800,7 @@ ErrHandler:
     Set ListPlusFriendID = Nothing
 End Function
 
-
+'알림톡 템플릿 목록 조회
 Public Function ListATSTemplate(CorpNum As String, Optional UserID As String = "") As Collection
 On Error GoTo ErrHandler
         
@@ -810,13 +810,13 @@ On Error GoTo ErrHandler
     
     Set ListATSTemplate = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBATSTemplate
     
-    For Each T In result
+    For Each t In result
         Set info = New PBATSTemplate
         
-        info.fromDictionary T
+        info.fromDictionary t
         
         ListATSTemplate.Add info
     Next
@@ -839,12 +839,12 @@ On Error GoTo ErrHandler
     
     Set GetSenderNumberList = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBKakaoSenderNumber
     
-    For Each T In result
+    For Each t In result
         Set info = New PBKakaoSenderNumber
-        info.fromDictionary T
+        info.fromDictionary t
         GetSenderNumberList.Add info
     Next
     
@@ -933,8 +933,7 @@ On Error GoTo ErrHandler
     
     Set result = httpGET("/KakaoTalk/" & ReceiptNum, getSession_token(CorpNum), UserID)
     
-    Dim T As Variant
-    Dim GetMessages As PBKakaoSentResult
+    Dim t As Variant
 
     Set GetMessages = New PBKakaoSentResult
        
