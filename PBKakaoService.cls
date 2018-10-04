@@ -24,6 +24,8 @@ Option Explicit
 ' Author : Jeong Yohan (code@linkhub.co.kr)
 ' Written : 2018-03-13
 ' Updated : 2018-03-14
+' Contributor : Kim EunHye (code@linkhub.co.kr)
+' Updated : 2018-10-04
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -32,6 +34,10 @@ Private Const ServiceID_TEST = "POPBILL_TEST"
 Private Const ServiceURL_REAL = "https://popbill.linkhub.co.kr"
 Private Const ServiceURL_TEST = "https://popbill-test.linkhub.co.kr"
 Private Const APIVersion = "1.0"
+
+Private Const adTypeBinary As Long = 1
+Private Const adTypeText As Long = 2
+Private Const adModeReadWrite As Long = 3
 
 Private m_IsTest As Boolean
 
@@ -858,7 +864,7 @@ End Function
 
 
 '전송내역 목록 조회
-Public Function Search(CorpNum As String, SDate As String, EDate As String, state As Collection, Item As Collection, ReserveYN As String, SenderYN As Boolean, Page As Integer, PerPage As Integer, Order As String) As PBKakaoSearchResult
+Public Function Search(CorpNum As String, SDate As String, EDate As String, state As Collection, Item As Collection, ReserveYN As String, SenderYN As Boolean, Page As Integer, PerPage As Integer, Order As String, Optional QString As String = "") As PBKakaoSearchResult
 On Error GoTo ErrHandler
     Dim result As Variant
     Dim uri As String
@@ -907,6 +913,8 @@ On Error GoTo ErrHandler
     uri = uri + "&Page=" + CStr(Page)
     uri = uri + "&PerPage=" + CStr(PerPage)
     uri = uri + "&Order=" + Order
+        
+    If QString <> "" Then uri = uri + "&QString=" + URLEncode(QString)
         
     Set result = httpGET(uri, getSession_token(CorpNum), "")
     
@@ -1175,4 +1183,50 @@ ErrHandler:
     SendFMS = ""
 End Function
 
+Private Function URLEncode(ByVal StringToEncode As String) As String
+   Dim i                As Integer
+   Dim iAsc             As Long
+   Dim sTemp            As String
+   
+   Dim ByteArrayToEncode() As Byte
+ 
+   ByteArrayToEncode = ADO_EncodeUTF8(StringToEncode)
+   
+   For i = 0 To UBound(ByteArrayToEncode)
+      iAsc = ByteArrayToEncode(i)
+      Select Case iAsc
+         Case 32 'space
+            sTemp = "+"
+         Case 48 To 57, 65 To 90, 97 To 122
+            sTemp = Chr(ByteArrayToEncode(i))
+         Case Else
+            Debug.Print iAsc
+            sTemp = "%" & Hex(iAsc)
+      End Select
+      URLEncode = URLEncode & sTemp
+   Next
+ 
+End Function
+  
+'Purpose: UTF16 to UTF8 using ADO
+Private Function ADO_EncodeUTF8(ByVal strUTF16 As String) As Byte()
+ 
+   Dim objStream        As Object
+   Dim Data()           As Byte
+ 
+   Set objStream = CreateObject("ADODB.Stream")
+   objStream.Charset = "utf-8"
+   objStream.Mode = adModeReadWrite
+   objStream.Type = adTypeText
+   objStream.Open
+   objStream.WriteText strUTF16
+   objStream.Flush
+   objStream.Position = 0
+   objStream.Type = adTypeBinary
+   objStream.Read 3 ' skip BOM
+   Data = objStream.Read()
+   objStream.Close
+   ADO_EncodeUTF8 = Data
+ 
+End Function
 

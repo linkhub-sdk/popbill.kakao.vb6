@@ -13,18 +13,20 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public state           As Integer
+Public state            As Integer
 Public result           As Integer
-Public altContentType           As Integer
-Public altResult           As Integer
+Public altContentType   As Integer
+Public altResult        As Integer
 Public sendDT           As String
-Public resultDT           As String
-Public contentType           As String
-Public receiveNum           As String
-Public receiveName           As String
-Public content           As String
-Public altSendDT           As String
-Public altResultDT           As String
+Public resultDT         As String
+Public contentType      As String
+Public receiveNum       As String
+Public receiveName      As String
+Public content          As String
+Public altSendDT        As String
+Public altResultDT      As String
+Public receiptNum       As String
+Public requestNum       As String
 
 
 Public Sub fromDictionary(dic As Variant)
@@ -42,6 +44,8 @@ Public Sub fromDictionary(dic As Variant)
     content = dic.Item("content")
     altSendDT = dic.Item("altSendDT")
     altResultDT = dic.Item("altResultDT")
+    receiptNum = dic.Item("receiptNum")
+    requestNum = dic.Item("requestNum")
     
 End Sub
 
