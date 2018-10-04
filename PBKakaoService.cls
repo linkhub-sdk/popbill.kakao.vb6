@@ -203,7 +203,7 @@ Private Function httpGET(url As String, BearerToken As String, Optional UserID A
     End If
     
     
-    winhttp1.send
+    winhttp1.Send
     
     Dim Response As String
     Response = winhttp1.responseText
@@ -254,7 +254,7 @@ Private Function httpPOST_override(url As String, BearerToken As String, overrid
     
     Call winhttp1.setRequestHeader("Content-Type", "Application/json")
     
-    winhttp1.send (postdata)
+    winhttp1.Send (postdata)
         
     Dim Response As String
     Response = winhttp1.responseText
@@ -396,7 +396,7 @@ Private Function httpPOST_File(url As String, BearerToken As String, postdata As
     
     CopyMemory Buffer(formSize + filePartSize), BtTail(0), tailSize
     
-    winhttp1.send (Buffer)
+    winhttp1.Send (Buffer)
         
     Dim Response As String
     Response = winhttp1.responseText
@@ -948,6 +948,30 @@ ErrHandler:
 End Function
 
 
+'전송내역 확인(요청번호할당)
+Public Function GetMessagesRN(CorpNum As String, requestNum As String, Optional UserID As String = "") As PBKakaoSentResult
+On Error GoTo ErrHandler
+    Dim result As Variant
+    If requestNum = "" Then
+        Err.Raise -99999999, "POPBILL", "요청번호가 입력되지 않았습니다."
+    End If
+    
+    Set result = httpGET("/KakaoTalk/Get/" & requestNum, getSession_token(CorpNum), UserID)
+    
+    Dim t As Variant
+
+    Set GetMessagesRN = New PBKakaoSentResult
+       
+    GetMessagesRN.fromDictionary result
+    
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    Set GetMessagesRN = Nothing
+
+End Function
+
 '예약전송 취소
 Public Function CancelReserve(CorpNum As String, ReceiptNum As String, Optional UserID As String = "") As PBResponse
 On Error GoTo ErrHandler
@@ -971,8 +995,30 @@ ErrHandler:
 End Function
 
 
+'예약전송 취소 (요청번호 할당)
+Public Function CancelReserveRN(CorpNum As String, requestNum As String, Optional UserID As String = "") As PBResponse
+On Error GoTo ErrHandler
+    Dim result As Variant
+    If requestNum = "" Then
+        Err.Raise -99999999, "POPBILL", "요청번호가 입력되지 않았습니다."
+    End If
+    
+    Set result = httpGET("/KakaoTalk/Cancel/" & requestNum, getSession_token(CorpNum), UserID)
+    Set CancelReserveRN = New PBResponse
+    
+    CancelReserveRN.code = result.Item("code")
+    CancelReserveRN.message = result.Item("message")
+    
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    Set CancelReserveRN = Nothing
+
+End Function
+
 '알림톡 전송
-Public Function SendATS(CorpNum As String, templateCode As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, Messages As Collection, Optional UserID As String = "") As String
+Public Function SendATS(CorpNum As String, templateCode As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, Messages As Collection, Optional UserID As String = "", Optional requestNum As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     If Messages Is Nothing Or Messages.Count = 0 Then
@@ -989,6 +1035,7 @@ On Error GoTo ErrHandler
     If altContent <> "" Then request.Add "altContent", altContent
     If altSendType <> "" Then request.Add "altSendType", altSendType
     If reserveDT <> "" Then request.Add "sndDT", reserveDT
+    If requestNum <> "" Then request.Add "requestNum", requestNum
     
     Dim msgs As New Collection
     
@@ -1018,7 +1065,7 @@ End Function
 
 
 '친구톡 텍스트 전송
-Public Function SendFTS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, Optional UserID As String = "") As String
+Public Function SendFTS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, Optional UserID As String = "", Optional requestNum As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     If Messages Is Nothing Or Messages.Count = 0 Then
@@ -1036,6 +1083,7 @@ On Error GoTo ErrHandler
     If altSendType <> "" Then request.Add "altSendType", altSendType
     If reserveDT <> "" Then request.Add "sndDT", reserveDT
     If adsYN Then request.Add "adsYN", True
+    If requestNum <> "" Then request.Add "requestNum", requestNum
     
     Dim msgs As New Collection
     Dim msg As PBKakaoReceiver
@@ -1071,7 +1119,7 @@ End Function
 
 
 '친구톡 이미지 전송
-Public Function SendFMS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, filePath As String, imageURL As String, Optional UserID As String = "") As String
+Public Function SendFMS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, filePath As String, imageURL As String, Optional UserID As String = "", Optional requestNum As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     If Messages Is Nothing Or Messages.Count = 0 Then
@@ -1090,6 +1138,7 @@ On Error GoTo ErrHandler
     If reserveDT <> "" Then request.Add "sndDT", reserveDT
     If imageURL <> "" Then request.Add "imageURL", imageURL
     If adsYN Then request.Add "adsYN", True
+    If requestNum <> "" Then request.Add "requestNum", requestNum
     
     Dim msgs As New Collection
     Dim msg As PBKakaoReceiver
