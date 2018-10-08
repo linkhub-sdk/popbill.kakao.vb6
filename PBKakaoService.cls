@@ -25,7 +25,7 @@ Option Explicit
 ' Written : 2018-03-13
 ' Updated : 2018-03-14
 ' Contributor : Kim EunHye (code@linkhub.co.kr)
-' Updated : 2018-10-04
+' Updated : 2018-10-05
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -427,6 +427,10 @@ End Function
 '연동회원 아이디 중복 확인
 Public Function CheckID(IDString As String) As PBResponse
 On Error GoTo ErrHandler
+    If IDString = "" Then
+        Err.Raise -99999999, "POPBILL", "중복여부를 확인할 아이디가 입력되지 않았습니다."
+    End If
+    
     Dim result As Variant
     
     Set result = httpGET("/IDCheck?ID=" + IDString, "")
@@ -648,6 +652,14 @@ End Function
 '회원가입 여부
 Public Function CheckIsMember(CorpNum As String, LinkID As String) As PBResponse
 On Error GoTo ErrHandler
+    If CorpNum = "" Then
+        Err.Raise -99999999, "POPBILL", "팝빌회원의 사업자번호가 입력되지 않았습니다."
+    End If
+    
+    If LinkID = "" Then
+        Err.Raise -99999999, "POPBILL", "링크아이디(LinkID)가 입력되지 않았습니다."
+    End If
+    
     Dim result As Variant
     
     Set result = httpGET("/Join?CorpNum=" + CorpNum + "&LID=" + LinkID, "")
@@ -932,14 +944,14 @@ End Function
 
 
 '전송내역 확인
-Public Function GetMessages(CorpNum As String, ReceiptNum As String, Optional UserID As String = "") As PBKakaoSentResult
+Public Function GetMessages(CorpNum As String, receiptNum As String, Optional UserID As String = "") As PBKakaoSentResult
 On Error GoTo ErrHandler
     Dim result As Variant
-    If ReceiptNum = "" Then
-        Err.Raise -99999999, "POPBILL", "접수번호가 입력되지 않았습니다."
+    If Not Len(receiptNum) = 18 Then
+        Err.Raise -99999999, "POPBILL", "접수번호(receiptNum)가 올바르지 않습니다."
     End If
     
-    Set result = httpGET("/KakaoTalk/" & ReceiptNum, getSession_token(CorpNum), UserID)
+    Set result = httpGET("/KakaoTalk/" & receiptNum, getSession_token(CorpNum), UserID)
     
     Dim t As Variant
 
@@ -981,14 +993,14 @@ ErrHandler:
 End Function
 
 '예약전송 취소
-Public Function CancelReserve(CorpNum As String, ReceiptNum As String, Optional UserID As String = "") As PBResponse
+Public Function CancelReserve(CorpNum As String, receiptNum As String, Optional UserID As String = "") As PBResponse
 On Error GoTo ErrHandler
     Dim result As Variant
-    If ReceiptNum = "" Then
-        Err.Raise -99999999, "POPBILL", "접수번호가 입력되지 않았습니다."
+    If Not Len(receiptNum) = 18 Then
+        Err.Raise -99999999, "POPBILL", "접수번호(receiptNum)가 올바르지 않습니다."
     End If
     
-    Set result = httpGET("/KakaoTalk/" & ReceiptNum & "/Cancel", getSession_token(CorpNum), UserID)
+    Set result = httpGET("/KakaoTalk/" & receiptNum & "/Cancel", getSession_token(CorpNum), UserID)
     Set CancelReserve = New PBResponse
     
     CancelReserve.code = result.Item("code")
