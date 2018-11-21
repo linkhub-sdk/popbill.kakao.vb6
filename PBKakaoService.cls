@@ -649,6 +649,37 @@ ErrHandler:
     GetPopbillURL = ""
 End Function
 
+'팝빌 로그인 기본 URL
+Public Function GetAccessURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+   Dim result As Variant
+   
+   Set result = httpGET("/?TG=LOGIN", getSession_token(CorpNum), UserID)
+   
+   GetAccessURL = result.Item("url")
+   Exit Function
+ErrHandler:
+   m_LastErrCode = Err.number
+   m_LastErrMessage = Err.Description
+   GetAccessURL = ""
+End Function
+
+'팝빌 연동회원 포인트 충전 URL
+Public Function GetChargeURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+   Dim result As Variant
+   
+   Set result = httpGET("/?TG=CHRG", getSession_token(CorpNum), UserID)
+   
+   GetChargeURL = result.Item("url")
+   Exit Function
+ErrHandler:
+   m_LastErrCode = Err.number
+   m_LastErrMessage = Err.Description
+   GetChargeURL = ""
+End Function
+
+
 '회원가입 여부
 Public Function CheckIsMember(CorpNum As String, LinkID As String) As PBResponse
 On Error GoTo ErrHandler
@@ -787,6 +818,68 @@ ErrHandler:
     m_LastErrCode = Err.number
     m_LastErrMessage = Err.Description
     GetURL = ""
+End Function
+
+
+'플러스친구 계정관리 팝업 URL
+Public Function GetPlusFriendMgtURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/KakaoTalk/?TG=PLUSFRIEND", getSession_token(CorpNum), UserID)
+    
+    GetPlusFriendMgtURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    GetPlusFriendMgtURL = ""
+End Function
+
+'발신번호 관리 팝업 URL
+Public Function GetSenderNumberMgtURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/Message/?TG=SENDER", getSession_token(CorpNum), UserID)
+    
+    GetSenderNumberMgtURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    GetSenderNumberMgtURL = ""
+End Function
+
+'알림톡 템플릿관리 팝업 URL
+Public Function GetATSTemplateMgtURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/KakaoTalk/?TG=TEMPLATE", getSession_token(CorpNum), UserID)
+    
+    GetATSTemplateMgtURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    GetATSTemplateMgtURL = ""
+End Function
+
+
+'카카오톡 전송내역 팝업 URL
+Public Function GetSentListURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/KakaoTalk/?TG=BOX", getSession_token(CorpNum), UserID)
+    
+    GetSentListURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    GetSentListURL = ""
 End Function
 
 '플러스친구 목록 확인
