@@ -21,10 +21,9 @@ Option Explicit
 ' on system32 by default.
 '
 ' http://www.popbill.com
-' Author : Jeong Yohan (code@linkhub.co.kr)
 ' Written : 2018-03-13
-' Contributor : Kim Hyunjin (code@linkhub.co.kr)
-' Updated : 2018-11-21
+' Author : Jeong Yohan (code@linkhub.co.kr)
+' Updated : 2019-03-07
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -1130,7 +1129,7 @@ ErrHandler:
 End Function
 
 '¾Ë¸²Åå Àü¼Û
-Public Function SendATS(CorpNum As String, templateCode As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, Messages As Collection, Optional UserID As String = "", Optional requestNum As String = "") As String
+Public Function SendATS(CorpNum As String, templateCode As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, Messages As Collection, Optional UserID As String = "", Optional requestNum As String = "", Optional Buttons As Collection = Nothing) As String
 On Error GoTo ErrHandler
     Dim result As Variant
     If Messages Is Nothing Or Messages.Count = 0 Then
@@ -1159,6 +1158,17 @@ On Error GoTo ErrHandler
     Next
     
     request.Add "msgs", msgs
+    
+    If Not Buttons Is Nothing Then
+        Dim btns As New Collection
+        Dim btn As PBKakaoButton
+        For Each btn In Buttons
+            btns.Add btn.toDictionary
+        Next
+    
+        request.Add "btns", btns
+    End If
+    
     
     Dim postdata As String
     
