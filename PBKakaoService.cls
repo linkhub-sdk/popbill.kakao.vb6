@@ -23,7 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Written : 2018-03-13
 ' Author : Jeong Yohan (code@linkhub.co.kr)
-' Updated : 2019-09-26
+' Updated : 2020-07-20
 '
 ' Thanks for your interest.
 '=================================================================================

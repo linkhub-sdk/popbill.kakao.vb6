@@ -17,6 +17,7 @@ Public rcv As String
 Public rcvnm As String
 Public msg As String
 Public altmsg As String
+Public buttonList As Collection
 
 Public Function toDictionary() As Variant
     Set toDictionary = CreateObject("Scripting.Dictionary")
@@ -26,5 +27,16 @@ Public Function toDictionary() As Variant
     If msg <> "" Then toDictionary.Add "msg", msg
     If altmsg <> "" Then toDictionary.Add "altmsg", altmsg
     
+    If (buttonList Is Nothing) = False Then
+        Dim t_buttonCollection As New Collection
+        Dim row As PBKakaoButton
+        For Each row In buttonList
+            t_buttonCollection.Add row.toDictionary()
+        Next
+        If t_buttonCollection.Count > 0 Then
+            toDictionary.Add "btns", t_buttonCollection
+        End If
+        
+    End If
 End Function
 
