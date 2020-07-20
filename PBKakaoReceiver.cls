@@ -17,6 +17,7 @@ Public rcv As String
 Public rcvnm As String
 Public msg As String
 Public altmsg As String
+Public interOPRefKey As String
 Public buttonList As Collection
 
 Public Function toDictionary() As Variant
@@ -26,6 +27,7 @@ Public Function toDictionary() As Variant
     If rcvnm <> "" Then toDictionary.Add "rcvnm", rcvnm
     If msg <> "" Then toDictionary.Add "msg", msg
     If altmsg <> "" Then toDictionary.Add "altmsg", altmsg
+    If interOPRefKey <> "" Then toDictionary.Add "interOPRefKey", interOPRefKey
     
     If (buttonList Is Nothing) = False Then
         Dim t_buttonCollection As New Collection

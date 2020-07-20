@@ -27,6 +27,8 @@ Public altSendDT        As String
 Public altResultDT      As String
 Public receiptNum       As String
 Public requestNum       As String
+Public altContent       As String
+Public interOPRefKey       As String
 
 
 Public Sub fromDictionary(dic As Variant)
@@ -46,6 +48,8 @@ Public Sub fromDictionary(dic As Variant)
     altResultDT = dic.Item("altResultDT")
     receiptNum = dic.Item("receiptNum")
     requestNum = dic.Item("requestNum")
+    altContent = dic.Item("altContent")
+    interOPRefKey = dic.Item("interOPRefKey")
     
 End Sub
 
