@@ -23,7 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Written : 2018-03-13
 ' Author : Jeong Yohan (code@linkhub.co.kr)
-' Updated : 2020-07-20
+' Updated : 2021-10-07
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -48,6 +48,7 @@ Private m_token_Dic
 Private m_Linkhub As Linkhub
 Private m_UseStaticIP As Boolean
 Private m_UseGAIP As Boolean
+Private m_UseLocalTimeYN As Boolean
 Private m_scope As New Collection
 Private m_LastErrCode As Long
 Private m_LastErrMessage As String
@@ -151,6 +152,10 @@ Public Property Let UseGAIP(ByVal value As Boolean)
     m_UseGAIP = value
 End Property
 
+Public Property Let UseLocalTimeYN(ByVal value As Boolean)
+    m_UseLocalTimeYN = value
+End Property
+
 '√ ±‚»≠
 Public Sub Initialize(LinkID As String, SecretKey As String)
     Set m_Linkhub = New Linkhub
@@ -169,6 +174,7 @@ Public Sub Initialize(LinkID As String, SecretKey As String)
     m_IPRestrictOnOff = True
     m_UseStaticIP = False
     m_UseGAIP = False
+    m_UseLocalTimeYN = False
 End Sub
 
 Private Function getTargetURL() As String
@@ -197,13 +203,13 @@ Private Function getSession_token(CorpNum As String) As String
         refresh = True
     Else
         Dim utcnow As String
-        utcnow = m_Linkhub.GetTime(m_UseStaticIP, m_UseGAIP)
+        utcnow = m_Linkhub.GetTime(m_UseStaticIP, m_UseGAIP, m_UseLocalTimeYN)
         refresh = m_Token.expiration < utcnow
     End If
     
     If refresh Then
     
-        Set m_Token = m_Linkhub.getToken(IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), CorpNum, m_scope, IIf(m_IPRestrictOnOff, "", "*"), m_UseStaticIP, m_UseGAIP)
+        Set m_Token = m_Linkhub.getToken(IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), CorpNum, m_scope, IIf(m_IPRestrictOnOff, "", "*"), m_UseStaticIP, m_UseGAIP, m_UseLocalTimeYN)
         
         If m_Token Is Nothing Then
             Err.Raise m_Linkhub.LastErrCode, "POPBILL", m_Linkhub.LastErrMessage
@@ -484,13 +490,13 @@ On Error GoTo ErrHandler
     
     Set ListContact = New Collection
     
-    Dim t As Variant
+    Dim T As Variant
     Dim info As PBContactInfo
     
-    For Each t In result
+    For Each T In result
         Set info = New PBContactInfo
         
-        info.fromDictionary t
+        info.fromDictionary T
         
         ListContact.Add info
     Next
@@ -921,13 +927,13 @@ On Error GoTo ErrHandler
     
     Set ListPlusFriendID = New Collection
     
-    Dim t As Variant
+    Dim T As Variant
     Dim info As PBPlusFriend
     
-    For Each t In result
+    For Each T In result
         Set info = New PBPlusFriend
         
-        info.fromDictionary t
+        info.fromDictionary T
         
         ListPlusFriendID.Add info
     Next
@@ -950,13 +956,13 @@ On Error GoTo ErrHandler
     
     Set ListATSTemplate = New Collection
     
-    Dim t As Variant
+    Dim T As Variant
     Dim info As PBATSTemplate
     
-    For Each t In result
+    For Each T In result
         Set info = New PBATSTemplate
         
-        info.fromDictionary t
+        info.fromDictionary T
         
         ListATSTemplate.Add info
     Next
@@ -979,12 +985,12 @@ On Error GoTo ErrHandler
     
     Set GetSenderNumberList = New Collection
     
-    Dim t As Variant
+    Dim T As Variant
     Dim info As PBKakaoSenderNumber
     
-    For Each t In result
+    For Each T In result
         Set info = New PBKakaoSenderNumber
-        info.fromDictionary t
+        info.fromDictionary T
         GetSenderNumberList.Add info
     Next
     
@@ -1075,7 +1081,7 @@ On Error GoTo ErrHandler
     
     Set result = httpGET("/KakaoTalk/" & receiptNum, getSession_token(CorpNum), UserID)
     
-    Dim t As Variant
+    Dim T As Variant
 
     Set GetMessages = New PBKakaoSentResult
        
@@ -1100,7 +1106,7 @@ On Error GoTo ErrHandler
     
     Set result = httpGET("/KakaoTalk/Get/" & requestNum, getSession_token(CorpNum), UserID)
     
-    Dim t As Variant
+    Dim T As Variant
 
     Set GetMessagesRN = New PBKakaoSentResult
        
