@@ -946,6 +946,28 @@ ErrHandler:
     Set ListPlusFriendID = Nothing
 End Function
 
+'알림톡 템플릿 정보 확인
+Public Function GetATSTemplate(CorpNum As String, templateCode As String, Optional UserID As String = "") As PBATSTemplate
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    If templateCode = "" Then
+        Err.Raise -99999999, "POPBILL", "템플릿코드가 입력되지 않았습니다."
+    End If
+    
+    Set result = httpGET("/KakaoTalk/GetATSTemplate/" + templateCode, getSession_token(CorpNum), UserID)
+    
+    Set GetATSTemplate = New PBATSTemplate
+    GetATSTemplate.fromDictionary result
+    
+    Exit Function
+    
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    Set GetATSTemplate = Nothing
+End Function
+
 '알림톡 템플릿 목록 조회
 Public Function ListATSTemplate(CorpNum As String, Optional UserID As String = "") As Collection
 On Error GoTo ErrHandler

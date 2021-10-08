@@ -14,9 +14,11 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public templateCode            As String
-Public templateName           As String
-Public template               As String
+Public templateName            As String
+Public template                As String
 Public plusFriendID            As String
+Public appendix                As String
+Public ads                     As String
 
 Public btns As Collection
 
@@ -26,6 +28,8 @@ Public Sub fromDictionary(dic As Variant)
     templateName = dic.Item("templateName")
     template = dic.Item("template")
     plusFriendID = dic.Item("plusFriendID")
+    appendix = dic.Item("appendix")
+    ads = dic.Item("ads")
     
     Dim tCollection As Collection
     
