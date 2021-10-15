@@ -23,7 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Written : 2018-03-13
 ' Author : Jeong Yohan (code@linkhub.co.kr)
-' Updated : 2021-10-07
+' Updated : 2021-10-15
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -157,10 +157,10 @@ Public Property Let UseLocalTimeYN(ByVal value As Boolean)
 End Property
 
 '초기화
-Public Sub Initialize(LinkID As String, SecretKey As String)
+Public Sub Initialize(linkID As String, SecretKey As String)
     Set m_Linkhub = New Linkhub
     
-    m_Linkhub.LinkID = LinkID
+    m_Linkhub.linkID = linkID
     m_Linkhub.SercetKey = SecretKey
     
     m_scope.Add "member"
@@ -480,6 +480,32 @@ ErrHandler:
     Set CheckID = Nothing
 End Function
 
+'연동회원 담당자 정보확인
+Public Function GetContactInfo(CorpNum As String, ContactID As String, Optional UserID As String = "") As PBContactInfo
+On Error GoTo ErrHandler
+    Dim result As Variant
+    Dim postdata As String
+    
+    Dim tmp
+    Set tmp = CreateObject("Scripting.Dictionary")
+    
+    tmp.Add "id", ContactID
+            
+    postdata = m_Linkhub.toString(tmp)
+    
+    
+    Set result = httpPOST("/Contact", getSession_token(CorpNum), postdata, UserID)
+    
+    Set GetContactInfo = New PBContactInfo
+    GetContactInfo.fromDictionary result
+    
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    Set GetContactInfo = Nothing
+End Function
+
 '연동회원 담당자 목록조회
 Public Function ListContact(CorpNum As String, Optional UserID As String = "") As Collection
 On Error GoTo ErrHandler
@@ -490,13 +516,13 @@ On Error GoTo ErrHandler
     
     Set ListContact = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBContactInfo
     
-    For Each T In result
+    For Each t In result
         Set info = New PBContactInfo
         
-        info.fromDictionary T
+        info.fromDictionary t
         
         ListContact.Add info
     Next
@@ -521,6 +547,7 @@ On Error GoTo ErrHandler
     
     tmp.Add "id", ContactInfo.id
     tmp.Add "pwd", ContactInfo.pwd
+    tmp.Add "Password", ContactInfo.Password
     tmp.Add "personName", ContactInfo.personName
     tmp.Add "tel", ContactInfo.tel
     tmp.Add "hp", ContactInfo.hp
@@ -528,12 +555,13 @@ On Error GoTo ErrHandler
     tmp.Add "email", ContactInfo.email
     tmp.Add "searchAllAllowYN", ContactInfo.searchAllAllowYN
     tmp.Add "mgrYN", ContactInfo.mgrYN
+    tmp.Add "searchRole", ContactInfo.searchRole
             
     postdata = m_Linkhub.toString(tmp)
     
     Dim result As Variant
     
-    Set result = httpPOST("/IDs/New", getSession_token(CorpNum), postdata)
+    Set result = httpPOST("/IDs/New", getSession_token(CorpNum), postdata, UserID)
     
     Set RegistContact = New PBResponse
     
@@ -563,6 +591,7 @@ On Error GoTo ErrHandler
     tmp.Add "email", ContactInfo.email
     tmp.Add "searchAllAllowYN", ContactInfo.searchAllAllowYN
     tmp.Add "mgrYN", ContactInfo.mgrYN
+    tmp.Add "searchRole", ContactInfo.searchRole
             
     postdata = m_Linkhub.toString(tmp)
     
@@ -714,21 +743,51 @@ ErrHandler:
    GetChargeURL = ""
 End Function
 
+'팝빌 연동회원 포인트 결제내역 팝업 URL
+Public Function GetPaymentURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/?TG=PAYMENT", getSession_token(CorpNum), UserID)
+    
+    GetPaymentURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    GetPaymentURL = ""
+End Function
+
+'팝빌 연동회원 포인트 사용내역 팝업 URL
+Public Function GetUseHistoryURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/?TG=USEHISTORY", getSession_token(CorpNum), UserID)
+    
+    GetUseHistoryURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    GetUseHistoryURL = ""
+End Function
+
 
 '회원가입 여부
-Public Function CheckIsMember(CorpNum As String, LinkID As String) As PBResponse
+Public Function CheckIsMember(CorpNum As String, linkID As String) As PBResponse
 On Error GoTo ErrHandler
     If CorpNum = "" Then
         Err.Raise -99999999, "POPBILL", "팝빌회원의 사업자번호가 입력되지 않았습니다."
     End If
     
-    If LinkID = "" Then
+    If linkID = "" Then
         Err.Raise -99999999, "POPBILL", "링크아이디(LinkID)가 입력되지 않았습니다."
     End If
     
     Dim result As Variant
     
-    Set result = httpGET("/Join?CorpNum=" + CorpNum + "&LID=" + LinkID, "")
+    Set result = httpGET("/Join?CorpNum=" + CorpNum + "&LID=" + linkID, "")
     
     Set CheckIsMember = New PBResponse
     CheckIsMember.code = result.Item("code")
@@ -750,7 +809,7 @@ On Error GoTo ErrHandler
     
     Set tmp = CreateObject("Scripting.Dictionary")
     
-    tmp.Add "LinkID", JoinInfo.LinkID
+    tmp.Add "LinkID", JoinInfo.linkID
     tmp.Add "CorpNum", JoinInfo.CorpNum
     tmp.Add "CorpName", JoinInfo.corpName
     tmp.Add "CEOName", JoinInfo.ceoname
@@ -765,6 +824,7 @@ On Error GoTo ErrHandler
     tmp.Add "ContactTEL", JoinInfo.ContactTEL
     tmp.Add "ID", JoinInfo.id
     tmp.Add "PWD", JoinInfo.pwd
+    tmp.Add "Password", JoinInfo.Password
     
     postdata = m_Linkhub.toString(tmp)
     
@@ -927,13 +987,13 @@ On Error GoTo ErrHandler
     
     Set ListPlusFriendID = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBPlusFriend
     
-    For Each T In result
+    For Each t In result
         Set info = New PBPlusFriend
         
-        info.fromDictionary T
+        info.fromDictionary t
         
         ListPlusFriendID.Add info
     Next
@@ -978,13 +1038,13 @@ On Error GoTo ErrHandler
     
     Set ListATSTemplate = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBATSTemplate
     
-    For Each T In result
+    For Each t In result
         Set info = New PBATSTemplate
         
-        info.fromDictionary T
+        info.fromDictionary t
         
         ListATSTemplate.Add info
     Next
@@ -1007,12 +1067,12 @@ On Error GoTo ErrHandler
     
     Set GetSenderNumberList = New Collection
     
-    Dim T As Variant
+    Dim t As Variant
     Dim info As PBKakaoSenderNumber
     
-    For Each T In result
+    For Each t In result
         Set info = New PBKakaoSenderNumber
-        info.fromDictionary T
+        info.fromDictionary t
         GetSenderNumberList.Add info
     Next
     
@@ -1103,7 +1163,7 @@ On Error GoTo ErrHandler
     
     Set result = httpGET("/KakaoTalk/" & receiptNum, getSession_token(CorpNum), UserID)
     
-    Dim T As Variant
+    Dim t As Variant
 
     Set GetMessages = New PBKakaoSentResult
        
@@ -1128,7 +1188,7 @@ On Error GoTo ErrHandler
     
     Set result = httpGET("/KakaoTalk/Get/" & requestNum, getSession_token(CorpNum), UserID)
     
-    Dim T As Variant
+    Dim t As Variant
 
     Set GetMessagesRN = New PBKakaoSentResult
        

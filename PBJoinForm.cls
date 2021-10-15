@@ -13,7 +13,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public LinkID          As String
+Public linkID          As String
 Public CorpNum         As String
 Public ceoname         As String
 Public corpName        As String
@@ -23,10 +23,10 @@ Public bizType         As String
 Public bizClass        As String
 Public id              As String
 Public pwd             As String
+Public Password        As String
 Public ContactName     As String
 Public ContactTEL      As String
 Public ContactHP       As String
 Public ContactFAX      As String
 Public ContactEmail    As String
-
 
