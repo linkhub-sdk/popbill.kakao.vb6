@@ -23,7 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Written : 2018-03-13
 ' Author : Jeong Yohan (code@linkhub.co.kr)
-' Updated : 2021-10-15
+' Updated : 2022-01-17
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -267,12 +267,12 @@ Private Function httpGET(url As String, BearerToken As String, Optional UserID A
 
 End Function
 
-Private Function httpPOST(url As String, BearerToken As String, postdata As String, Optional UserID As String) As Variant
-    Set httpPOST = httpPOST_override(url, BearerToken, "", postdata, UserID)
+Private Function httpPOST(url As String, BearerToken As String, postData As String, Optional UserID As String) As Variant
+    Set httpPOST = httpPOST_override(url, BearerToken, "", postData, UserID)
     
 End Function
 
-Private Function httpPOST_override(url As String, BearerToken As String, override As String, postdata As String, Optional UserID As String) As Variant
+Private Function httpPOST_override(url As String, BearerToken As String, override As String, postData As String, Optional UserID As String) As Variant
      
     Dim winhttp1
     
@@ -295,7 +295,7 @@ Private Function httpPOST_override(url As String, BearerToken As String, overrid
     
     Call winhttp1.setRequestHeader("Content-Type", "Application/json")
     
-    winhttp1.Send (postdata)
+    winhttp1.Send (postData)
         
     Dim Response As String
     Response = winhttp1.responseText
@@ -326,7 +326,7 @@ Private Function GetOnlyFileName(ByVal filePath As String) As String
 
 End Function
 
-Private Function httpPOST_File(url As String, BearerToken As String, postdata As String, FilePaths As Collection, Optional UserID As String) As Variant
+Private Function httpPOST_File(url As String, BearerToken As String, postData As String, FilePaths As Collection, Optional UserID As String) As Variant
     Dim winhttp1
     Dim boundary As String
     boundary = "---------------------popbill"
@@ -349,11 +349,11 @@ Private Function httpPOST_File(url As String, BearerToken As String, postdata As
     
     Dim applicationform As String
     
-    If postdata <> "" Then
+    If postData <> "" Then
         applicationform = "--" & boundary & vbCrLf & _
                           "Content-Disposition: form-data; name=""form""" & vbCrLf & _
                           "Content-Type: Application/json" & vbCrLf & vbCrLf & _
-                          postdata
+                          postData
     
     End If
     
@@ -484,17 +484,17 @@ End Function
 Public Function GetContactInfo(CorpNum As String, ContactID As String, Optional UserID As String = "") As PBContactInfo
 On Error GoTo ErrHandler
     Dim result As Variant
-    Dim postdata As String
+    Dim postData As String
     
     Dim tmp
     Set tmp = CreateObject("Scripting.Dictionary")
     
     tmp.Add "id", ContactID
             
-    postdata = m_Linkhub.toString(tmp)
+    postData = m_Linkhub.toString(tmp)
     
     
-    Set result = httpPOST("/Contact", getSession_token(CorpNum), postdata, UserID)
+    Set result = httpPOST("/Contact", getSession_token(CorpNum), postData, UserID)
     
     Set GetContactInfo = New PBContactInfo
     GetContactInfo.fromDictionary result
@@ -540,7 +540,7 @@ Public Function RegistContact(CorpNum As String, ContactInfo As PBContactInfo, O
 On Error GoTo ErrHandler
     Set RegistContact = Nothing
     
-    Dim postdata As String
+    Dim postData As String
     Dim tmp
     
     Set tmp = CreateObject("Scripting.Dictionary")
@@ -557,11 +557,11 @@ On Error GoTo ErrHandler
     tmp.Add "mgrYN", ContactInfo.mgrYN
     tmp.Add "searchRole", ContactInfo.searchRole
             
-    postdata = m_Linkhub.toString(tmp)
+    postData = m_Linkhub.toString(tmp)
     
     Dim result As Variant
     
-    Set result = httpPOST("/IDs/New", getSession_token(CorpNum), postdata, UserID)
+    Set result = httpPOST("/IDs/New", getSession_token(CorpNum), postData, UserID)
     
     Set RegistContact = New PBResponse
     
@@ -578,7 +578,7 @@ Public Function UpdateContact(CorpNum As String, ContactInfo As PBContactInfo, U
 On Error GoTo ErrHandler
     Set UpdateContact = Nothing
     
-    Dim postdata As String
+    Dim postData As String
     Dim tmp
     
     Set tmp = CreateObject("Scripting.Dictionary")
@@ -593,11 +593,11 @@ On Error GoTo ErrHandler
     tmp.Add "mgrYN", ContactInfo.mgrYN
     tmp.Add "searchRole", ContactInfo.searchRole
             
-    postdata = m_Linkhub.toString(tmp)
+    postData = m_Linkhub.toString(tmp)
     
     Dim result As Variant
     
-    Set result = httpPOST("/IDs", getSession_token(CorpNum), postdata, UserID)
+    Set result = httpPOST("/IDs", getSession_token(CorpNum), postData, UserID)
     
     Set UpdateContact = New PBResponse
     
@@ -614,7 +614,7 @@ Public Function UpdateCorpInfo(CorpNum As String, CorpInfo As PBCorpInfo, Option
 On Error GoTo ErrHandler
     Set UpdateCorpInfo = Nothing
     
-    Dim postdata As String
+    Dim postData As String
     Dim tmp
     
     Set tmp = CreateObject("Scripting.Dictionary")
@@ -625,11 +625,11 @@ On Error GoTo ErrHandler
     tmp.Add "bizType", CorpInfo.bizType
     tmp.Add "bizClass", CorpInfo.bizClass
             
-    postdata = m_Linkhub.toString(tmp)
+    postData = m_Linkhub.toString(tmp)
     
     Dim result As Variant
     
-    Set result = httpPOST("/CorpInfo", getSession_token(CorpNum), postdata, UserID)
+    Set result = httpPOST("/CorpInfo", getSession_token(CorpNum), postData, UserID)
     
     Set UpdateCorpInfo = New PBResponse
     
@@ -804,7 +804,7 @@ Public Function JoinMember(JoinInfo As PBJoinForm) As PBResponse
 On Error GoTo ErrHandler
     Set JoinMember = Nothing
     
-    Dim postdata As String
+    Dim postData As String
     Dim tmp
     
     Set tmp = CreateObject("Scripting.Dictionary")
@@ -826,11 +826,11 @@ On Error GoTo ErrHandler
     tmp.Add "PWD", JoinInfo.pwd
     tmp.Add "Password", JoinInfo.Password
     
-    postdata = m_Linkhub.toString(tmp)
+    postData = m_Linkhub.toString(tmp)
     
     Dim result As Variant
     
-    Set result = httpPOST("/Join", "", postdata)
+    Set result = httpPOST("/Join", "", postData)
     
     Set JoinMember = New PBResponse
     
@@ -1289,11 +1289,11 @@ On Error GoTo ErrHandler
     End If
     
     
-    Dim postdata As String
+    Dim postData As String
     
-    postdata = m_Linkhub.toString(request)
+    postData = m_Linkhub.toString(request)
     
-    Set result = httpPOST("/ATS", getSession_token(CorpNum), postdata, UserID)
+    Set result = httpPOST("/ATS", getSession_token(CorpNum), postData, UserID)
     
     SendATS = result.Item("receiptNum")
     
@@ -1343,11 +1343,11 @@ On Error GoTo ErrHandler
     request.Add "btns", btns
     
     
-    Dim postdata As String
+    Dim postData As String
     
-    postdata = m_Linkhub.toString(request)
+    postData = m_Linkhub.toString(request)
     
-    Set result = httpPOST("/FTS", getSession_token(CorpNum), postdata, UserID)
+    Set result = httpPOST("/FTS", getSession_token(CorpNum), postData, UserID)
     
     SendFTS = result.Item("receiptNum")
     
@@ -1401,11 +1401,11 @@ On Error GoTo ErrHandler
     Dim FilePaths As New Collection
     FilePaths.Add filePath
     
-    Dim postdata As String
+    Dim postData As String
     
-    postdata = m_Linkhub.toString(request)
+    postData = m_Linkhub.toString(request)
     
-    Set result = httpPOST_File("/FMS", getSession_token(CorpNum), postdata, FilePaths, UserID)
+    Set result = httpPOST_File("/FMS", getSession_token(CorpNum), postData, FilePaths, UserID)
         
     SendFMS = result.Item("receiptNum")
     
