@@ -13,31 +13,33 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public state            As Integer
-Public result           As Integer
-Public altContentType   As Integer
-Public altResult        As Integer
-Public sendDT           As String
-Public resultDT         As String
-Public contentType      As String
-Public receiveNum       As String
-Public receiveName      As String
-Public content          As String
-Public altSendDT        As String
-Public altResultDT      As String
-Public receiptNum       As String
-Public requestNum       As String
-Public altContent       As String
-Public interOPRefKey       As String
+Public state As Integer
+Public result As Integer
+Public altSubject As String
+Public altContent As String
+Public altContentType As Integer
+Public altResult As Integer
+Public sendDT As String
+Public resultDT As String
+Public contentType As String
+Public receiveNum As String
+Public receiveName As String
+Public content As String
+Public altSendDT As String
+Public altResultDT As String
+Public receiptNum As String
+Public requestNum As String
+Public interOPRefKey As String
 
 
 Public Sub fromDictionary(dic As Variant)
 
     state = dic.Item("state")
     result = dic.Item("result")
+    altSubject = dic.Item("altSubject")
+    altContent = dic.Item("altContent")
     altContentType = dic.Item("altContentType")
     altResult = dic.Item("altResult")
-    
     sendDT = dic.Item("sendDT")
     resultDT = dic.Item("resultDT")
     contentType = dic.Item("contentType")
@@ -48,9 +50,7 @@ Public Sub fromDictionary(dic As Variant)
     altResultDT = dic.Item("altResultDT")
     receiptNum = dic.Item("receiptNum")
     requestNum = dic.Item("requestNum")
-    altContent = dic.Item("altContent")
     interOPRefKey = dic.Item("interOPRefKey")
-    
 End Sub
 
 

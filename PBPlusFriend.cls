@@ -13,17 +13,18 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public plusFriendID               As String
-Public plusFriendName               As String
-Public regDT               As String
+Public plusFriendID     As String
+Public plusFriendName   As String
+Public regDT            As String
+Public state            As String
+Public stateDT          As String
 
 Public Sub fromDictionary(dic As Variant)
     plusFriendID = dic.Item("plusFriendID")
     plusFriendName = dic.Item("plusFriendName")
     regDT = dic.Item("regDT")
+    state = dic.Item("state")
+    stateDT = dic.Item("stateDT")
 End Sub
-
-
-
 
 

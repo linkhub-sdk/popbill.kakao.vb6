@@ -18,6 +18,7 @@ Public contentType As String
 Public templateCode As String
 Public plusFriendID As String
 Public sendNum As String
+Public altSubject As String
 Public altContent As String
 Public altSendType As String
 Public reserveDT As String
@@ -37,6 +38,7 @@ Public Sub fromDictionary(dic As Variant)
     templateCode = dic.Item("templateCode")
     plusFriendID = dic.Item("plusFriendID")
     sendNum = dic.Item("sendNum")
+    altSubject = dic.Item("altSubject")
     altContent = dic.Item("altContent")
     altSendType = dic.Item("altSendType")
     reserveDT = dic.Item("reserveDT")

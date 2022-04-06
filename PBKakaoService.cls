@@ -23,7 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Written : 2018-03-13
 ' Author : Jeong Yohan (code@linkhubcorp.com)
-' Updated : 2022-01-17
+' Updated : 2022-04-06
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -915,7 +915,6 @@ ErrHandler:
     GetURL = ""
 End Function
 
-
 '플러스친구 계정관리 팝업 URL
 Public Function GetPlusFriendMgtURL(CorpNum As String, UserID As String) As String
 On Error GoTo ErrHandler
@@ -929,6 +928,28 @@ ErrHandler:
     m_LastErrCode = Err.number
     m_LastErrMessage = Err.Description
     GetPlusFriendMgtURL = ""
+End Function
+
+'발신번호 등록여부 확인
+Public Function CheckSenderNumber(CorpNum As String, SenderNumber As String, Optional UserID As String = "") As PBResponse
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    If SenderNumber = "" Then
+        Err.Raise -99999999, "POPBILL", "발신번호가 입력되지 않았습니다."
+    End If
+
+    Set result = httpGET("/KakaoTalk/CheckSenderNumber/" + SenderNumber, getSession_token(CorpNum), UserID)
+    
+    Set CheckSenderNumber = New PBResponse
+    
+    CheckSenderNumber.code = result.Item("code")
+    CheckSenderNumber.message = result.Item("message")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.number
+    m_LastErrMessage = Err.Description
+    Set CheckSenderNumber = Nothing
 End Function
 
 '발신번호 관리 팝업 URL
@@ -1248,7 +1269,7 @@ ErrHandler:
 End Function
 
 '알림톡 전송
-Public Function SendATS(CorpNum As String, templateCode As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, Messages As Collection, Optional UserID As String = "", Optional requestNum As String = "", Optional Buttons As Collection = Nothing) As String
+Public Function SendATS(CorpNum As String, templateCode As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, Messages As Collection, Optional UserID As String = "", Optional requestNum As String = "", Optional Buttons As Collection = Nothing, Optional altSubject As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     If Messages Is Nothing Or Messages.Count = 0 Then
@@ -1262,6 +1283,7 @@ On Error GoTo ErrHandler
     If templateCode <> "" Then request.Add "templateCode", templateCode
     If senderNum <> "" Then request.Add "snd", senderNum
     If content <> "" Then request.Add "content", content
+    If altSubject <> "" Then request.Add "altSubject", altSubject
     If altContent <> "" Then request.Add "altContent", altContent
     If altSendType <> "" Then request.Add "altSendType", altSendType
     If reserveDT <> "" Then request.Add "sndDT", reserveDT
@@ -1306,7 +1328,7 @@ End Function
 
 
 '친구톡 텍스트 전송
-Public Function SendFTS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, Optional UserID As String = "", Optional requestNum As String = "") As String
+Public Function SendFTS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, Optional UserID As String = "", Optional requestNum As String = "", Optional altSubject As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     If Messages Is Nothing Or Messages.Count = 0 Then
@@ -1320,6 +1342,7 @@ On Error GoTo ErrHandler
     If plusFriendID <> "" Then request.Add "plusFriendID", plusFriendID
     If senderNum <> "" Then request.Add "snd", senderNum
     If content <> "" Then request.Add "content", content
+    If altSubject <> "" Then request.Add "altSubject", altSubject
     If altContent <> "" Then request.Add "altContent", altContent
     If altSendType <> "" Then request.Add "altSendType", altSendType
     If reserveDT <> "" Then request.Add "sndDT", reserveDT
@@ -1360,7 +1383,7 @@ End Function
 
 
 '친구톡 이미지 전송
-Public Function SendFMS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, filePath As String, imageURL As String, Optional UserID As String = "", Optional requestNum As String = "") As String
+Public Function SendFMS(CorpNum As String, plusFriendID As String, senderNum As String, content As String, altContent As String, altSendType As String, reserveDT As String, adsYN As Boolean, Messages As Collection, Buttons As Collection, filePath As String, imageURL As String, Optional UserID As String = "", Optional requestNum As String = "", Optional altSubject As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     If Messages Is Nothing Or Messages.Count = 0 Then
@@ -1374,6 +1397,7 @@ On Error GoTo ErrHandler
     If plusFriendID <> "" Then request.Add "plusFriendID", plusFriendID
     If senderNum <> "" Then request.Add "snd", senderNum
     If content <> "" Then request.Add "content", content
+    If altSubject <> "" Then request.Add "altSubject", altSubject
     If altContent <> "" Then request.Add "altContent", altContent
     If altSendType <> "" Then request.Add "altSendType", altSendType
     If reserveDT <> "" Then request.Add "sndDT", reserveDT

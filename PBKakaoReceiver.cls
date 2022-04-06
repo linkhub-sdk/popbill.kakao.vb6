@@ -16,6 +16,7 @@ Option Explicit
 Public rcv As String
 Public rcvnm As String
 Public msg As String
+Public altsjt As String
 Public altmsg As String
 Public interOPRefKey As String
 Public buttonList As Collection
@@ -26,6 +27,7 @@ Public Function toDictionary() As Variant
     If rcv <> "" Then toDictionary.Add "rcv", rcv
     If rcvnm <> "" Then toDictionary.Add "rcvnm", rcvnm
     If msg <> "" Then toDictionary.Add "msg", msg
+    If altsjt <> "" Then toDictionary.Add "altsjt", altsjt
     If altmsg <> "" Then toDictionary.Add "altmsg", altmsg
     If interOPRefKey <> "" Then toDictionary.Add "interOPRefKey", interOPRefKey
     
