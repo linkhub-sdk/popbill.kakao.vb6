@@ -16,7 +16,7 @@ Option Explicit
 Public plusFriendID     As String
 Public plusFriendName   As String
 Public regDT            As String
-Public state            As String
+Public state            As Integer
 Public stateDT          As String
 
 Public Sub fromDictionary(dic As Variant)
