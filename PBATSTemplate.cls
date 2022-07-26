@@ -19,6 +19,9 @@ Public template                As String
 Public plusFriendID            As String
 Public appendix                As String
 Public ads                     As String
+Public secureYN                As Boolean
+Public state                   As Integer
+Public stateDT                 As String
 
 Public btns As Collection
 
@@ -30,6 +33,9 @@ Public Sub fromDictionary(dic As Variant)
     plusFriendID = dic.Item("plusFriendID")
     appendix = dic.Item("appendix")
     ads = dic.Item("ads")
+    secureYN = dic.Item("secureYN")
+    state = dic.Item("state")
+    stateDT = dic.Item("stateDT")
     
     Dim tCollection As Collection
     
@@ -40,13 +46,13 @@ Public Sub fromDictionary(dic As Variant)
         If (tCollection Is Nothing) = False Then
             Set btns = New Collection
             
-            Dim T As Variant
+            Dim t As Variant
             Dim btnInfo As PBKakaoButton
     
-            For Each T In tCollection
+            For Each t In tCollection
                 Set btnInfo = New PBKakaoButton
                 
-                btnInfo.fromDictionary T
+                btnInfo.fromDictionary t
                 
                 btns.Add btnInfo
             Next
