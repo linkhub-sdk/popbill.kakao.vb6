@@ -238,6 +238,7 @@ Private Function httpGET(url As String, BearerToken As String, Optional UserID A
     Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
     Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
     Call winhttp1.setRequestHeader("Accept-Encoding", "gzip,deflate")
+    Call winhttp1.setRequestHeader("User-Agent", "VB6 POPBiLL SDK")
     
     If UserID <> "" Then
         Call winhttp1.setRequestHeader("x-pb-userid", UserID)
@@ -280,6 +281,7 @@ Private Function httpPOST_override(url As String, BearerToken As String, overrid
     Call winhttp1.Open("POST", getTargetURL() + url, False)
     Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
     Call winhttp1.setRequestHeader("Accept-Encoding", "gzip,deflate")
+    Call winhttp1.setRequestHeader("User-Agent", "VB6 POPBiLL SDK")
     
     If BearerToken <> "" Then
         Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
@@ -335,6 +337,7 @@ Private Function httpPOST_File(url As String, BearerToken As String, postData As
     Call winhttp1.Open("POST", getTargetURL() + url, False)
     Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
     Call winhttp1.setRequestHeader("Accept-Encoding", "gzip,deflate")
+    Call winhttp1.setRequestHeader("User-Agent", "VB6 POPBiLL SDK")
     
     
     If BearerToken <> "" Then
